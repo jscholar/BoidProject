@@ -173,7 +173,11 @@ class Boid {
         const lineLength = distance2D(this.positionX, this.positionY, otherBoid.positionX, otherBoid.positionY);
         lineElement.style.height = `${lineLength}px`;
 
-        lineElement.style.width = `${Math.sqrt(5 * (this.range - lineLength) / this.range)}px`;
+        // Determines the thickness/weight of the line
+        lineElement.style.width = `${Math.sqrt(10 * (this.range - lineLength) / this.range)}px`;
+
+        // Reduce opacity when distance is close to the range limit
+        lineElement.style.opacity = `${100 * (this.range - lineLength) / this.range}%`;
 
         const transforms = [];
 
