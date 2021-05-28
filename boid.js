@@ -52,25 +52,25 @@ class Boid {
     moveBoid() {
         const { CANVAS_HEIGHT, CANVAS_WIDTH } = WORLD;
         const deltaT = 1;
-        const offset = 50;
+        const offset = 20;
         this.positionX += this.velocityX * deltaT;
         this.positionY += -this.velocityY * deltaT;
 
         /**
          * If the boid has moved out of the canvas, wrap it back into the canvas
          */
-        if (this.positionX > CANVAS_WIDTH) {
+        if (this.positionX > CANVAS_WIDTH + offset) {
             this.positionX = -offset;
         }
         else if (this.positionX < -offset) {
-            this.positionX = CANVAS_WIDTH;
+            this.positionX = CANVAS_WIDTH + offset;
         }
 
-        if (this.positionY > CANVAS_HEIGHT) {
-            this.positionY = 0;
+        if (this.positionY > CANVAS_HEIGHT + offset) {
+            this.positionY = -offset;
         }
         else if (this.positionY < -offset) {
-            this.positionY = CANVAS_HEIGHT;
+            this.positionY = CANVAS_HEIGHT + offset;
         }
     }
 
