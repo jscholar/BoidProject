@@ -41,17 +41,16 @@ class Boid {
         }
     }
 
-    update(flock, timestamp) {
+    update(flock, deltaT) {
         this.findNeighborsWithinRange(flock);
-        this.moveBoid();
+        this.moveBoid(deltaT);
     }
 
     /**
      * Move the boid's position
     */
-    moveBoid() {
+    moveBoid(deltaT) {
         const { CANVAS_HEIGHT, CANVAS_WIDTH } = WORLD;
-        const deltaT = 1;
         const offset = 20;
         this.positionX += this.velocityX * deltaT;
         this.positionY += -this.velocityY * deltaT;

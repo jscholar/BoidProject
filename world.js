@@ -5,6 +5,7 @@ const WORLD = {
   CANVAS_WIDTH: 1000,
   CANVAS_HEIGHT: 1000,
   NUM_BOIDS: 50,
+  TIME_SCALE: 0.1,
 };
 
 // List containing all boids in the world

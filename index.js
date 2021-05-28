@@ -21,17 +21,21 @@ function init() {
         appendFlock(boid);
     }
 
-    gameLoop(0);
+    window.requestAnimationFrame(gameLoop);
 }
 
-let lastTimestamp;
+let lastTimestamp = 0;
 
 function gameLoop(timestamp) {
+    const deltaT = (timestamp - lastTimestamp) * WORLD.TIME_SCALE;
+    
     for (let i = 0; i < flock.length; i++) {
         const boid = flock[i];
-        boid.update(flock);
+        boid.update(flock, deltaT);
         boid.draw();
     }
+
+    lastTimestamp = timestamp;
     window.requestAnimationFrame(gameLoop);
 }
 
