@@ -58,3 +58,38 @@ body {
   display: inline;
   position: absolute;
 }
+
+.slider-container {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 20%;
+}
+
+.separation-range {
+  justify-content: center;
+  width: 50%;
+}
+.separation-value {
+  justify-content: center;
+  width: 50%;
+}
+
+.cohere-range {
+  justify-content: center;
+  width: 50%;
+}
+.cohere-value {
+  justify-content: center;
+  width: 50%;
+}
+
+.fov-range {
+  justify-content: center;
+  width: 50%;
+}
+.fov-value {
+  justify-content: center;
+  width: 50%;
+}

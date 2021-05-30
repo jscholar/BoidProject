@@ -6,26 +6,30 @@ import { distance2D, subtract2D, magnitude2D, normalize2D } from "./utils.js";
 class Boid {
     FOVEnabled = false;
     nearestNeigbhorEnabled = false;
-
     neighbors = new Set();
     neighborLineElements = {};
 
-    seperateSteerElement;
+    separateSteerElement;
 
     constructor({ id, isHighlighted }) {
         this.id = id;
         this.highlighted = isHighlighted;
+
+        // Coefficients
+        this.separationCoefficient = 1e-6;
+        this.cohereCoefficient = 1e-6;
+
 
         // Model position
         this.positionX = (Math.random() * WORLD.CANVAS_WIDTH);
         this.positionY = (Math.random() * WORLD.CANVAS_HEIGHT);
 
         // Model velocity
-        this.velocityX = Math.random() * (Math.random() < 0.5 ? -1 : 1);
-        this.velocityY = Math.random() * (Math.random() < 0.5 ? 10.0 : 10.0);
+        this.velocityX = Math.random() * 10 - 5;
+        this.velocityY = Math.random() * 10 - 5;
 
         // Model field of vision
-        this.range = 125;
+        this.range = 150;
 
         this.initializeDOMElements(isHighlighted);
     }
@@ -40,9 +44,9 @@ class Boid {
         // Determines whether to draw FOV or other details
         if (isHighlighted) {
             this.toggleFOV();
-            this.seperateSteerElement = document.createElement("div");
-            this.seperateSteerElement.classList.add("steering-line");
-            document.getElementById("canvas").appendChild(this.seperateSteerElement);
+            this.separateSteerElement = document.createElement("div");
+            this.separateSteerElement.classList.add("steering-line");
+            document.getElementById("canvas").appendChild(this.separateSteerElement);
         }
     }
 
@@ -52,6 +56,7 @@ class Boid {
          * Apply boid rules
          */
         this.separate(deltaT);
+        this.cohere(deltaT);
         this.speedControl();
         this.moveBoid(deltaT);
 
@@ -197,10 +202,8 @@ class Boid {
      * Avoid nearby boids
      */
     separate(deltaT) {
-        const separationCoefficient = 1e-5;
         let totalSteerX = 0;
         let totalSteerY = 0;
-
 
         this.neighbors.forEach((neighborBoid) => {
             // let desiredVelocity = subtract2D(neighborBoid.positionX, neighborBoid.positionY, this.positionX, this.positionY);
@@ -215,7 +218,7 @@ class Boid {
             // A number from 0.0 - 1.0
             const strengthRatio = Math.pow(1 - (distance / this.range), 2);
 
-            const steerStrength = strengthRatio * separationCoefficient;
+            const steerStrength = strengthRatio * this.separationCoefficient;
 
             // Set strength of seperation according to distance (closer boids separate more strongly)
             totalSteerX += steerStrength * normalizedSteerX;
@@ -228,7 +231,7 @@ class Boid {
                 "background-color": "green",
                 width: "3px",
             }
-            this.drawLine(this.seperateSteerElement, { X: totalSteerX / separationCoefficient, Y: totalSteerY / separationCoefficient }, styles)
+            this.drawLine(this.separateSteerElement, { X: totalSteerX / this.separationCoefficient, Y: totalSteerY / this.separationCoefficient }, styles)
         }
 
         // Set maximum force the boid can generate
@@ -259,8 +262,38 @@ class Boid {
     /**
      * Fly towards center of mass
      */
-    cohere() {
+    cohere(deltaT) {
+        let totalSteerX = 0;
+        let totalSteerY = 0;
+        let centerOfMassX = 0;
+        let centerOfMassY = 0;
+        this.neighbors.forEach((neighborBoid) => {
+            centerOfMassX += neighborBoid.positionX;
+            centerOfMassY += neighborBoid.positionY;
+        });
 
+        if (this.neighbors.size > 0) {
+            centerOfMassX = centerOfMassX / this.neighbors.size;
+            centerOfMassY = centerOfMassY / this.neighbors.size;
+
+            let [desiredVelocityX, desiredVelocityY] = subtract2D(centerOfMassX, centerOfMassY, this.positionX, this.positionY);
+            let desiredSteer = subtract2D(desiredVelocityX, desiredVelocityY, this.velocityX, this.velocityY);
+            const [normalizedSteerX, normalizedSteerY] = normalize2D(desiredSteer);
+
+            const distance = distance2D(this.positionX, this.positionY, centerOfMassX, centerOfMassY);
+
+            // A number from 0.0 - 1.0
+            const strengthRatio = Math.pow(1 - (distance / this.range), 2);
+
+            const steerStrength = strengthRatio * this.cohereCoefficient;
+
+            // Set strength of seperation according to distance (closer boids separate more strongly)
+            totalSteerX += steerStrength * normalizedSteerX;
+            totalSteerY += steerStrength * normalizedSteerY;
+
+        }
+        this.velocityX += (totalSteerX) * deltaT;
+        this.velocityY -= (totalSteerY) * deltaT;
     }
 
     /**

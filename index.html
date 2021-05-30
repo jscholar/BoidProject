@@ -11,6 +11,16 @@
 
 <body>
     <div class="canvas-container" id="canvas-container"></div>
+    <div class="slider-container" id="slider-container">
+        <input type="range" min="0" max="100" value="1" id="separation-range" class="separation-range">
+        <p>Separation Coefficient: <span id="separation-value" class=separation-value></span></p>
+
+        <input type="range" min="0" max="100" value="1" id="cohere-range" class="cohere-range">
+        <p>Cohere Coefficient: <span id="cohere-value" class=cohere-value></span></p>
+
+        <input type="range" min="0" max="300" value="150" id="fov-range" class="fov-range">
+        <p>Boid View Range: <span id="fov-value" class=fov-value></span></p>
+    </div>
 
 </body>
 <script type="module" src="index.js"></script>
