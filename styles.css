@@ -53,3 +53,8 @@ body {
   width: 2px;
   background-color: red;
 }
+
+.steering-line {
+  display: inline;
+  position: absolute;
+}

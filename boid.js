@@ -1,6 +1,6 @@
 import { WORLD, appendFlock, flock } from "./world.js";
 import { HIGHLIGHT_CONFIG } from "./config.js";
-import { distance2D } from "./utils.js";
+import { distance2D, subtract2D, magnitude2D, normalize2D } from "./utils.js";
 
 // Boid object
 class Boid {
@@ -9,6 +9,8 @@ class Boid {
 
     neighbors = new Set();
     neighborLineElements = {};
+
+    seperateSteerElement;
 
     constructor({ id, isHighlighted }) {
         this.id = id;
@@ -20,7 +22,7 @@ class Boid {
 
         // Model velocity
         this.velocityX = Math.random() * (Math.random() < 0.5 ? -1 : 1);
-        this.velocityY = Math.random() * (Math.random() < 0.5 ? -1 : 1);
+        this.velocityY = Math.random() * (Math.random() < 0.5 ? 10.0 : 10.0);
 
         // Model field of vision
         this.range = 125;
@@ -38,12 +40,21 @@ class Boid {
         // Determines whether to draw FOV or other details
         if (isHighlighted) {
             this.toggleFOV();
+            this.seperateSteerElement = document.createElement("div");
+            this.seperateSteerElement.classList.add("steering-line");
+            document.getElementById("canvas").appendChild(this.seperateSteerElement);
         }
     }
 
     update(flock, deltaT) {
         this.findNeighborsWithinRange(flock);
+        /**
+         * Apply boid rules
+         */
+        this.separate(deltaT);
+        this.speedControl();
         this.moveBoid(deltaT);
+
     }
 
     /**
@@ -168,51 +179,80 @@ class Boid {
             document.getElementById("canvas").appendChild(lineElement);
         }
 
-        // Use the distance between the points as the line length
-        const lineLength = distance2D(this.positionX, this.positionY, otherBoid.positionX, otherBoid.positionY);
-        lineElement.style.height = `${lineLength}px`;
-
-        // Determines the thickness/weight of the line
-        lineElement.style.width = `${Math.sqrt(10 * (this.range - lineLength) / this.range)}px`;
-
-        // Reduce opacity when distance is close to the range limit
-        lineElement.style.opacity = `${100 * (this.range - lineLength) / this.range}%`;
-
-        const transforms = [];
-
-        // Vector [X, Y] is the vector that points from this boid, to the other boid
         const vectorX = otherBoid.positionX - this.positionX;
         const vectorY = otherBoid.positionY - this.positionY;
+        const lineLength = distance2D(0, 0, vectorX, vectorY);
 
-        /**
-         * The line is rotated about its center. So we need to move the center of the line to the point
-         * exactly halfway between the boids.
-         */
-        const translationX = this.positionX + vectorX / 2;
-        const translationY = this.positionY + vectorY / 2 - lineLength / 2; // Line length needed to cancel the height of the div I guess.
-        transforms.push(`translate(${translationX}px, ${translationY}px)`)
+        // Determines the thickness/weight of the line
+        const width = `${Math.sqrt(10 * (this.range - lineLength) / this.range)}px`;
 
-        /**
-         * Rotate the line to point from this boid to the other boid
-         * Since vector [X, Y] points from this boid to the other boid, we can pass this to atan2
-         */
-        const rotationInRadians = -Math.atan2(vectorX, vectorY);
-        transforms.push(`rotate(${rotationInRadians}rad)`);
+        // Reduce opacity when distance is close to the range limit
+        const opacity = `${100 * (this.range - lineLength) / this.range}%`;
 
-        lineElement.style.transform = transforms.join(" ");
+        const styles = { width, opacity };
+        this.drawLine(lineElement, { X: vectorX, Y: vectorY }, styles);
     }
 
     /**
      * Avoid nearby boids
      */
-    separate() {
+    separate(deltaT) {
+        const separationCoefficient = 1e-5;
+        let totalSteerX = 0;
+        let totalSteerY = 0;
 
+
+        this.neighbors.forEach((neighborBoid) => {
+            // let desiredVelocity = subtract2D(neighborBoid.positionX, neighborBoid.positionY, this.positionX, this.positionY);
+            let [desiredVelocityX, desiredVelocityY] = subtract2D(this.positionX, this.positionY, neighborBoid.positionX, neighborBoid.positionY);
+            // Set a maximum desired velocity
+
+            let desiredSteer = subtract2D(desiredVelocityX, desiredVelocityY, this.velocityX, this.velocityY);
+            const [normalizedSteerX, normalizedSteerY] = normalize2D(desiredSteer);
+
+            const distance = distance2D(this.positionX, this.positionY, neighborBoid.positionX, neighborBoid.positionY);
+
+            // A number from 0.0 - 1.0
+            const strengthRatio = Math.pow(1 - (distance / this.range), 2);
+
+            const steerStrength = strengthRatio * separationCoefficient;
+
+            // Set strength of seperation according to distance (closer boids separate more strongly)
+            totalSteerX += steerStrength * normalizedSteerX;
+            totalSteerY += steerStrength * normalizedSteerY;
+
+        });
+
+        if (this.highlighted) {
+            const styles = {
+                "background-color": "green",
+                width: "3px",
+            }
+            this.drawLine(this.seperateSteerElement, { X: totalSteerX / separationCoefficient, Y: totalSteerY / separationCoefficient }, styles)
+        }
+
+        // Set maximum force the boid can generate
+        this.velocityX += (totalSteerX) * deltaT;
+        this.velocityY -= (totalSteerY) * deltaT;
     }
+
+    /**
+     * Speed Control
+     */
+    speedControl() {
+        const maxSpeed = 2;
+        const currentBoidSpeed = magnitude2D([this.velocityX, this.velocityY]);
+        if (currentBoidSpeed > maxSpeed) {
+            this.velocityX = (this.velocityX / currentBoidSpeed) * maxSpeed;
+            this.velocityY = (this.velocityY / currentBoidSpeed) * maxSpeed;
+        }
+    }
+
 
     /**
      * Move towards average direction of nearby boids
      */
-    Align() {
+    align() {
 
     }
 
@@ -220,6 +260,7 @@ class Boid {
      * Fly towards center of mass
      */
     cohere() {
+
     }
 
     /**
@@ -244,6 +285,37 @@ class Boid {
         });
 
         return this.neighbors;
+    }
+
+    /**
+     * Draws a line originating from this boid with the given vector values
+     */
+    drawLine(lineElement, vector, styles) {
+        // Use the distance between the points as the line length
+
+        // Vector [X, Y] is the vector that points from this boid
+        const vectorX = vector.X;
+        const vectorY = vector.Y;
+
+        const transforms = [];
+        /**
+         * The line is rotated about its center. So we need to move the center of the line to the point
+         * exactly halfway between the boids.
+         */
+        const lineLength = distance2D(0, 0, vectorX, vectorY);
+        const translationX = this.positionX + vectorX / 2;
+        const translationY = this.positionY + vectorY / 2 - (lineLength / 2); // Line length needed to cancel the height of the div I guess.
+        transforms.push(`translate(${translationX}px, ${translationY}px)`);
+
+        // Rotate the line to point in the direction of the vector
+        // Since vector [X, Y] points from this boid to the other boid, we can pass this to atan2
+        const rotationInRadians = -Math.atan2(vectorX, vectorY);
+        transforms.push(`rotate(${rotationInRadians}rad)`);
+        const transform = transforms.join(" ");
+
+        Object.entries(styles).forEach(([property, value]) => lineElement.style[property] = value);
+        lineElement.style.transform = transform;
+        lineElement.style.height = `${lineLength}px`;
     }
 }
 
