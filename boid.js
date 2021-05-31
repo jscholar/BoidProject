@@ -1,6 +1,6 @@
 import { WORLD, appendFlock, flock } from "./world.js";
 import { HIGHLIGHT_CONFIG } from "./config.js";
-import { distance2D, subtract2D, magnitude2D, normalize2D } from "./utils.js";
+import { distance2D, subtract2D, magnitude2D, normalize2D, scale2D, add2D } from "./utils.js";
 
 // Boid object
 class Boid {
@@ -16,17 +16,20 @@ class Boid {
         this.highlighted = isHighlighted;
 
         // Coefficients
-        this.separationCoefficient = 1e-6;
-        this.cohereCoefficient = 1e-6;
+        this.separationCoefficient = 1e-1;
+        this.cohereCoefficient = 1e-1;
 
+        // Model position vector
+        this.position = [
+            (Math.random() * WORLD.CANVAS_WIDTH), // The X position
+            (Math.random() * WORLD.CANVAS_HEIGHT), // The Y position
+        ];
 
-        // Model position
-        this.positionX = (Math.random() * WORLD.CANVAS_WIDTH);
-        this.positionY = (Math.random() * WORLD.CANVAS_HEIGHT);
-
-        // Model velocity
-        this.velocityX = Math.random() * 10 - 5;
-        this.velocityY = Math.random() * 10 - 5;
+        // Model velocity vector
+        this.velocity = [
+            Math.random() * 10 - 5,
+            Math.random() * 10 - 5,
+        ];
 
         // Model field of vision
         this.range = 150;
@@ -68,24 +71,23 @@ class Boid {
     moveBoid(deltaT) {
         const { CANVAS_HEIGHT, CANVAS_WIDTH } = WORLD;
         const offset = 20;
-        this.positionX += this.velocityX * deltaT;
-        this.positionY += -this.velocityY * deltaT;
+        this.position = add2D(this.position, scale2D(this.velocity, deltaT));
 
         /**
          * If the boid has moved out of the canvas, wrap it back into the canvas
          */
-        if (this.positionX > CANVAS_WIDTH + offset) {
-            this.positionX = -offset;
+        if (this.position[0] > CANVAS_WIDTH + offset) {
+            this.position[0] = -offset;
         }
-        else if (this.positionX < -offset) {
-            this.positionX = CANVAS_WIDTH + offset;
+        else if (this.position[0] < -offset) {
+            this.position[0] = CANVAS_WIDTH + offset;
         }
 
-        if (this.positionY > CANVAS_HEIGHT + offset) {
-            this.positionY = -offset;
+        if (this.position[1] > CANVAS_HEIGHT + offset) {
+            this.position[1] = -offset;
         }
-        else if (this.positionY < -offset) {
-            this.positionY = CANVAS_HEIGHT + offset;
+        else if (this.position[1] < -offset) {
+            this.position[1] = CANVAS_HEIGHT + offset;
         }
     }
 
@@ -130,10 +132,13 @@ class Boid {
 
         const transforms = [];
 
-        const positionTransform = `translate(${this.positionX}px, ${this.positionY}px)`;
+        const [positionX, positionY] = this.position
+        const positionTransform = `translate(${positionX}px, ${positionY}px)`;
         transforms.push(positionTransform);
 
-        const rotationInRadians = -Math.atan2(this.velocityY, this.velocityX);
+        const [velocityX, velocityY] = this.velocity;
+
+        const rotationInRadians = Math.atan2(velocityY, velocityX);
         const rotationTransform = `rotateZ(${rotationInRadians}rad)`;
         transforms.push(rotationTransform);
 
@@ -184,9 +189,8 @@ class Boid {
             document.getElementById("canvas").appendChild(lineElement);
         }
 
-        const vectorX = otherBoid.positionX - this.positionX;
-        const vectorY = otherBoid.positionY - this.positionY;
-        const lineLength = distance2D(0, 0, vectorX, vectorY);
+        const vectorToOtherBoid = subtract2D(this.position, otherBoid.position);
+        const lineLength = magnitude2D(vectorToOtherBoid);
 
         // Determines the thickness/weight of the line
         const width = `${Math.sqrt(10 * (this.range - lineLength) / this.range)}px`;
@@ -195,35 +199,30 @@ class Boid {
         const opacity = `${100 * (this.range - lineLength) / this.range}%`;
 
         const styles = { width, opacity };
-        this.drawLine(lineElement, { X: vectorX, Y: vectorY }, styles);
+        this.drawLine(lineElement, vectorToOtherBoid, styles);
     }
 
     /**
      * Avoid nearby boids
      */
     separate(deltaT) {
-        let totalSteerX = 0;
-        let totalSteerY = 0;
+        let totalSteer = [0, 0];
 
         this.neighbors.forEach((neighborBoid) => {
-            // let desiredVelocity = subtract2D(neighborBoid.positionX, neighborBoid.positionY, this.positionX, this.positionY);
-            let [desiredVelocityX, desiredVelocityY] = subtract2D(this.positionX, this.positionY, neighborBoid.positionX, neighborBoid.positionY);
-            // Set a maximum desired velocity
+            let desiredVelocity = subtract2D(neighborBoid.position, this.position);
 
-            let desiredSteer = subtract2D(desiredVelocityX, desiredVelocityY, this.velocityX, this.velocityY);
-            const [normalizedSteerX, normalizedSteerY] = normalize2D(desiredSteer);
+            let desiredSteer = subtract2D(this.velocity, desiredVelocity);
+            const normalizedSteer = normalize2D(desiredSteer);
 
-            const distance = distance2D(this.positionX, this.positionY, neighborBoid.positionX, neighborBoid.positionY);
+            const distance = distance2D(this.position, neighborBoid.position);
 
             // A number from 0.0 - 1.0
-            const strengthRatio = Math.pow(1 - (distance / this.range), 2);
+            const strengthRatio = Math.pow(1 - (distance / this.range), 2); 
 
             const steerStrength = strengthRatio * this.separationCoefficient;
 
             // Set strength of seperation according to distance (closer boids separate more strongly)
-            totalSteerX += steerStrength * normalizedSteerX;
-            totalSteerY += steerStrength * normalizedSteerY;
-
+            totalSteer = add2D(totalSteer, scale2D(normalizedSteer, steerStrength));
         });
 
         if (this.highlighted) {
@@ -231,12 +230,11 @@ class Boid {
                 "background-color": "green",
                 width: "3px",
             }
-            this.drawLine(this.separateSteerElement, { X: totalSteerX / this.separationCoefficient, Y: totalSteerY / this.separationCoefficient }, styles)
+            this.drawLine(this.separateSteerElement, scale2D(totalSteer, 1000), styles)
         }
 
         // Set maximum force the boid can generate
-        this.velocityX += (totalSteerX) * deltaT;
-        this.velocityY -= (totalSteerY) * deltaT;
+        this.velocity = add2D(this.velocity, scale2D(totalSteer, deltaT));
     }
 
     /**
@@ -244,10 +242,9 @@ class Boid {
      */
     speedControl() {
         const maxSpeed = 2;
-        const currentBoidSpeed = magnitude2D([this.velocityX, this.velocityY]);
+        const currentBoidSpeed = magnitude2D(this.velocity);
         if (currentBoidSpeed > maxSpeed) {
-            this.velocityX = (this.velocityX / currentBoidSpeed) * maxSpeed;
-            this.velocityY = (this.velocityY / currentBoidSpeed) * maxSpeed;
+            this.velocity = scale2D(this.velocity, maxSpeed / currentBoidSpeed);
         }
     }
 
@@ -263,24 +260,18 @@ class Boid {
      * Fly towards center of mass
      */
     cohere(deltaT) {
-        let totalSteerX = 0;
-        let totalSteerY = 0;
-        let centerOfMassX = 0;
-        let centerOfMassY = 0;
-        this.neighbors.forEach((neighborBoid) => {
-            centerOfMassX += neighborBoid.positionX;
-            centerOfMassY += neighborBoid.positionY;
-        });
+        let totalSteer = [0, 0];
+        let centerOfMass = [0, 0];
+        this.neighbors.forEach((neighborBoid) => centerOfMass = add2D(centerOfMass, neighborBoid.position));
 
         if (this.neighbors.size > 0) {
-            centerOfMassX = centerOfMassX / this.neighbors.size;
-            centerOfMassY = centerOfMassY / this.neighbors.size;
+            centerOfMass = scale2D(centerOfMass, 1 / this.neighbors.size);
 
-            let [desiredVelocityX, desiredVelocityY] = subtract2D(centerOfMassX, centerOfMassY, this.positionX, this.positionY);
-            let desiredSteer = subtract2D(desiredVelocityX, desiredVelocityY, this.velocityX, this.velocityY);
-            const [normalizedSteerX, normalizedSteerY] = normalize2D(desiredSteer);
+            let desiredVelocity = subtract2D(this.position, centerOfMass);
+            let desiredSteer = subtract2D(this.velocity, desiredVelocity);
+            const normalizedSteer = normalize2D(desiredSteer);
 
-            const distance = distance2D(this.positionX, this.positionY, centerOfMassX, centerOfMassY);
+            const distance = distance2D(this.position, centerOfMass);
 
             // A number from 0.0 - 1.0
             const strengthRatio = Math.pow(1 - (distance / this.range), 2);
@@ -288,12 +279,10 @@ class Boid {
             const steerStrength = strengthRatio * this.cohereCoefficient;
 
             // Set strength of seperation according to distance (closer boids separate more strongly)
-            totalSteerX += steerStrength * normalizedSteerX;
-            totalSteerY += steerStrength * normalizedSteerY;
-
+            totalSteer = add2D(totalSteer, scale2D(normalizedSteer, steerStrength));
         }
-        this.velocityX += (totalSteerX) * deltaT;
-        this.velocityY -= (totalSteerY) * deltaT;
+
+        this.velocity = add2D(this.velocity, scale2D(totalSteer, deltaT));
     }
 
     /**
@@ -310,7 +299,7 @@ class Boid {
         flock.forEach((otherBoid) => {
             if (otherBoid === this) return;
 
-            if (this.range >= distance2D(this.positionX, this.positionY, otherBoid.positionX, otherBoid.positionY)) {
+            if (this.range >= distance2D(this.position, otherBoid.position)) {
                 this.neighbors.add(otherBoid)
             } else {
                 this.neighbors.delete(otherBoid)
@@ -327,17 +316,16 @@ class Boid {
         // Use the distance between the points as the line length
 
         // Vector [X, Y] is the vector that points from this boid
-        const vectorX = vector.X;
-        const vectorY = vector.Y;
+        const [vectorX, vectorY] = vector;
 
         const transforms = [];
         /**
          * The line is rotated about its center. So we need to move the center of the line to the point
          * exactly halfway between the boids.
          */
-        const lineLength = distance2D(0, 0, vectorX, vectorY);
-        const translationX = this.positionX + vectorX / 2;
-        const translationY = this.positionY + vectorY / 2 - (lineLength / 2); // Line length needed to cancel the height of the div I guess.
+        const lineLength = magnitude2D(vector);
+        const translationX = this.position[0] + vectorX / 2;
+        const translationY = this.position[1] + vectorY / 2 - (lineLength / 2); // Line length needed to cancel the height of the div I guess.
         transforms.push(`translate(${translationX}px, ${translationY}px)`);
 
         // Rotate the line to point in the direction of the vector
