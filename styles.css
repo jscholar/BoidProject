@@ -57,6 +57,15 @@ body {
 .steering-line {
   display: inline;
   position: absolute;
+  background-color: green;
+  width: 3px;
+}
+
+.cohere-line {
+  display: inline;
+  position: absolute;
+  background-color: blue;
+  width: 3px;
 }
 
 .slider-container {

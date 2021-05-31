@@ -10,6 +10,7 @@ class Boid {
     neighborLineElements = {};
 
     separateSteerElement;
+    cohereSteerElement;
 
     constructor({ id, isHighlighted }) {
         this.id = id;
@@ -50,6 +51,10 @@ class Boid {
             this.separateSteerElement = document.createElement("div");
             this.separateSteerElement.classList.add("steering-line");
             document.getElementById("canvas").appendChild(this.separateSteerElement);
+
+            this.cohereSteerElement = document.createElement("div");
+            this.cohereSteerElement.classList.add("cohere-line");
+            document.getElementById("canvas").appendChild(this.cohereSteerElement);
         }
     }
 
@@ -226,10 +231,6 @@ class Boid {
         });
 
         if (this.highlighted) {
-            const styles = {
-                "background-color": "green",
-                width: "3px",
-            }
             this.drawLine(this.separateSteerElement, scale2D(totalSteer, 1000), styles)
         }
 
@@ -282,6 +283,10 @@ class Boid {
             totalSteer = add2D(totalSteer, scale2D(normalizedSteer, steerStrength));
         }
 
+        if (this.highlighted) {
+            this.drawLine(this.cohereSteerElement, scale2D(totalSteer, 1000));
+        }
+
         this.velocity = add2D(this.velocity, scale2D(totalSteer, deltaT));
     }
 
@@ -312,7 +317,7 @@ class Boid {
     /**
      * Draws a line originating from this boid with the given vector values
      */
-    drawLine(lineElement, vector, styles) {
+    drawLine(lineElement, vector, styles = {}) {
         // Use the distance between the points as the line length
 
         // Vector [X, Y] is the vector that points from this boid
