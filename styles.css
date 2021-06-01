@@ -68,6 +68,13 @@ body {
   width: 3px;
 }
 
+.align-line {
+  display: inline;
+  position: absolute;
+  background-color: yellow;
+  width: 3px;
+}
+
 .slider-container {
   display:flex;
   flex-direction: column;
@@ -90,6 +97,15 @@ body {
   width: 50%;
 }
 .cohere-value {
+  justify-content: center;
+  width: 50%;
+}
+
+.align-range {
+  justify-content: center;
+  width: 50%;
+}
+.align-value {
   justify-content: center;
   width: 50%;
 }

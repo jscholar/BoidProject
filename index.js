@@ -26,8 +26,9 @@ function init() {
     /**
      * Initialize default coefficient values.
      */
-    var defaultSeparationCoefficient = 1e-6;
-    var defaultCohereCoefficient = 1e-6;
+    var defaultSeparationCoefficient = 1e-2;
+    var defaultCohereCoefficient = 1e-2;
+    var defaultAlignCoefficient = 1e-2;
 
 
     /**
@@ -43,6 +44,13 @@ function init() {
     var cohereCoefficientSlider = document.getElementById("cohere-range");
     var cohereOutput = document.getElementById("cohere-value");
     cohereOutput.innerHTML = cohereCoefficientSlider.value;
+
+    /**
+     * Initialize align slider.
+     */
+     var alignCoefficientSlider = document.getElementById("align-range");
+     var alignOutput = document.getElementById("align-value");
+     alignOutput.innerHTML = alignCoefficientSlider.value;
 
     /**
      * Initialize FOV slider.
@@ -70,7 +78,7 @@ function init() {
     /**
      * Update cohere scroller.
      */
-    // Displays separation coefficient value.
+    // Displays cohere coefficient value.
     cohereCoefficientSlider.oninput = function () {
         cohereOutput.innerHTML = this.value;
     }
@@ -80,6 +88,22 @@ function init() {
         var cohereSliderValue = defaultCohereCoefficient * cohereCoefficientSlider.value;
         flock.forEach((boid) => {
             boid.cohereCoefficient = cohereSliderValue;
+        })
+    });
+
+    /**
+     * Update align scroller.
+     */
+    // Displays align coefficient value.
+    alignCoefficientSlider.oninput = function () {
+        alignOutput.innerHTML = this.value;
+    }
+
+    // Updates boid's ALIGN coefficient based on scroller value.
+    alignCoefficientSlider.addEventListener("input", function () {
+        var alignSliderValue = defaultAlignCoefficient * alignCoefficientSlider.value;
+        flock.forEach((boid) => {
+            boid.alignCoefficient = alignSliderValue;
         })
     });
 

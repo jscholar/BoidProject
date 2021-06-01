@@ -65,4 +65,14 @@ function scale2D([x, y], scalingFactor) {
     return [x * scalingFactor, y * scalingFactor];
 }
 
-export { distance2D, subtract2D, magnitude2D, normalize2D, add2D, scale2D };
+/**
+ * Find angle between two vectors in radians
+ * 
+ * @param {number[]} vector 
+ * @param {number} scalingFactor 
+ */
+function angle2D([x1, y1], [x2, y2]) {
+    return Math.atan2(y1, x1) - Math.atan2(y2, x2);
+}
+
+export { distance2D, subtract2D, magnitude2D, normalize2D, add2D, scale2D, angle2D };

@@ -1,6 +1,6 @@
 import { WORLD, appendFlock, flock } from "./world.js";
 import { HIGHLIGHT_CONFIG } from "./config.js";
-import { distance2D, subtract2D, magnitude2D, normalize2D, scale2D, add2D } from "./utils.js";
+import { distance2D, subtract2D, magnitude2D, normalize2D, scale2D, add2D, angle2D } from "./utils.js";
 
 // Boid object
 class Boid {
@@ -11,6 +11,13 @@ class Boid {
 
     separateSteerElement;
     cohereSteerElement;
+    alignSteerElement;
+
+    maxSpeed = 3;
+    range = 150;
+    
+    leftSideFOV = 130 * (Math.PI/180);
+    rightSideFOV = 130 * (Math.PI/180);
 
     constructor({ id, isHighlighted }) {
         this.id = id;
@@ -19,6 +26,7 @@ class Boid {
         // Coefficients
         this.separationCoefficient = 1e-1;
         this.cohereCoefficient = 1e-1;
+        this.alignCoefficient = 1e-2;
 
         // Model position vector
         this.position = [
@@ -27,13 +35,11 @@ class Boid {
         ];
 
         // Model velocity vector
-        this.velocity = [
+        const direction = [
             Math.random() * 10 - 5,
             Math.random() * 10 - 5,
         ];
-
-        // Model field of vision
-        this.range = 150;
+        this.velocity = scale2D(normalize2D(direction), this.maxSpeed);        
 
         this.initializeDOMElements(isHighlighted);
     }
@@ -55,6 +61,10 @@ class Boid {
             this.cohereSteerElement = document.createElement("div");
             this.cohereSteerElement.classList.add("cohere-line");
             document.getElementById("canvas").appendChild(this.cohereSteerElement);
+
+            this.alignSteerElement = document.createElement("div");
+            this.alignSteerElement.classList.add("align-line");
+            document.getElementById("canvas").appendChild(this.alignSteerElement);            
         }
     }
 
@@ -65,6 +75,7 @@ class Boid {
          */
         this.separate(deltaT);
         this.cohere(deltaT);
+        this.align(deltaT);
         this.speedControl();
         this.moveBoid(deltaT);
 
@@ -216,8 +227,7 @@ class Boid {
         this.neighbors.forEach((neighborBoid) => {
             let desiredVelocity = subtract2D(neighborBoid.position, this.position);
 
-            let desiredSteer = subtract2D(this.velocity, desiredVelocity);
-            const normalizedSteer = normalize2D(desiredSteer);
+            const normalizedSteer = this.steerTowardsTarget(desiredVelocity);
 
             const distance = distance2D(this.position, neighborBoid.position);
 
@@ -231,7 +241,7 @@ class Boid {
         });
 
         if (this.highlighted) {
-            this.drawLine(this.separateSteerElement, scale2D(totalSteer, 1000), styles)
+            this.drawLine(this.separateSteerElement, scale2D(totalSteer, 1000));
         }
 
         // Set maximum force the boid can generate
@@ -242,19 +252,41 @@ class Boid {
      * Speed Control
      */
     speedControl() {
-        const maxSpeed = 2;
-        const currentBoidSpeed = magnitude2D(this.velocity);
-        if (currentBoidSpeed > maxSpeed) {
-            this.velocity = scale2D(this.velocity, maxSpeed / currentBoidSpeed);
-        }
+        // const maxSpeed = 5;
+        // const currentBoidSpeed = magnitude2D(this.velocity);
+        // if (currentBoidSpeed > maxSpeed) {
+        //     this.velocity = scale2D(this.velocity, maxSpeed / currentBoidSpeed);
+        // }
+        this.velocity = scale2D(normalize2D(this.velocity), this.maxSpeed);
     }
-
 
     /**
      * Move towards average direction of nearby boids
      */
-    align() {
+    align(deltaT) {
+        // Calculate average velocity
+        let steer = [0, 0];
+        let desiredVelocity = [0, 0];
+        this.neighbors.forEach((neighborBoid) => desiredVelocity = add2D(desiredVelocity, neighborBoid.velocity));
 
+        if (this.neighbors.size > 0) {
+            desiredVelocity = scale2D(desiredVelocity, 1 / this.neighbors.size);
+
+            const normalizedSteer = this.steerTowardsTarget(desiredVelocity);
+
+            const distance = distance2D(this.position, desiredVelocity);
+            // const strengthRatio = Math.pow(1 - (distance / this.range), 2); // A number from 0.0 - 1.0
+            const steerStrength = 1 * this.alignCoefficient;
+
+            // Set strength of seperation according to distance (closer boids separate more strongly)
+            steer = scale2D(normalizedSteer, steerStrength);
+        }
+        
+        if (this.highlighted) {
+            this.drawLine(this.alignSteerElement, scale2D(steer, 1000));
+        }
+        
+        this.velocity = add2D(this.velocity, scale2D(steer, deltaT));
     }
 
     /**
@@ -269,15 +301,11 @@ class Boid {
             centerOfMass = scale2D(centerOfMass, 1 / this.neighbors.size);
 
             let desiredVelocity = subtract2D(this.position, centerOfMass);
-            let desiredSteer = subtract2D(this.velocity, desiredVelocity);
-            const normalizedSteer = normalize2D(desiredSteer);
+            const normalizedSteer = this.steerTowardsTarget(desiredVelocity);
 
             const distance = distance2D(this.position, centerOfMass);
-
-            // A number from 0.0 - 1.0
-            const strengthRatio = Math.pow(1 - (distance / this.range), 2);
-
-            const steerStrength = strengthRatio * this.cohereCoefficient;
+            // const strengthRatio = Math.pow(1 - (distance / this.range), 2); // A number from 0.0 - 1.0
+            const steerStrength = 1 * this.cohereCoefficient;
 
             // Set strength of seperation according to distance (closer boids separate more strongly)
             totalSteer = add2D(totalSteer, scale2D(normalizedSteer, steerStrength));
@@ -297,22 +325,40 @@ class Boid {
 
     }
 
+    steerTowardsTarget(desiredDirection) {
+        // Scale desired velocity to max
+        const desiredVelocity = scale2D(normalize2D(desiredDirection), this.maxSpeed);
+
+        let desiredSteer = subtract2D(this.velocity, desiredVelocity);
+        return normalize2D(desiredSteer);
+    }
+
     /**
      * Find neighbors within this boid's range
      */
     findNeighborsWithinRange(flock) {
         flock.forEach((otherBoid) => {
             if (otherBoid === this) return;
+            const vectorFromBoidToOther = subtract2D(this.position, otherBoid.position);
+            const angleBetweenNeighbor = angle2D(this.velocity, vectorFromBoidToOther);
+            // if (angleBetweenNeighbor < 0 || angleBetweenNeighbor > 2 * Math.PI){
+            //     console.log(angleBetweenNeighbor);
+            // }
 
-            if (this.range >= distance2D(this.position, otherBoid.position)) {
-                this.neighbors.add(otherBoid)
+            const isInsideFOV = (angleBetweenNeighbor > -this.leftSideFOV && angleBetweenNeighbor < this.rightSideFOV);
+            const isInsideRange = this.range >= distance2D(this.position, otherBoid.position);
+
+            if (isInsideRange && isInsideFOV) {
+                this.neighbors.add(otherBoid);
             } else {
-                this.neighbors.delete(otherBoid)
+                this.neighbors.delete(otherBoid);
             }
         });
 
         return this.neighbors;
     }
+
+    // 
 
     /**
      * Draws a line originating from this boid with the given vector values
