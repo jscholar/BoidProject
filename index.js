@@ -8,8 +8,8 @@ function init() {
     const canvasElement = document.createElement("div");
     canvasElement.setAttribute("id", "canvas");
     canvasElement.classList.add("canvas");
-    canvasElement.style.width = `${WORLD.CANVAS_WIDTH}px`;
-    canvasElement.style.height = `${WORLD.CANVAS_HEIGHT}px`;
+    canvasElement.style.minWidth = `${WORLD.CANVAS_WIDTH}px`;
+    canvasElement.style.minHeight = `${WORLD.CANVAS_HEIGHT}px`;
     document.getElementById("canvas-container").appendChild(canvasElement);
 
     /**
@@ -30,7 +30,6 @@ function init() {
     var defaultCohereCoefficient = 1e-2;
     var defaultAlignCoefficient = 1e-2;
 
-
     /**
      * Initialize separate slider.
      */
@@ -48,9 +47,9 @@ function init() {
     /**
      * Initialize align slider.
      */
-     var alignCoefficientSlider = document.getElementById("align-range");
-     var alignOutput = document.getElementById("align-value");
-     alignOutput.innerHTML = alignCoefficientSlider.value;
+    var alignCoefficientSlider = document.getElementById("align-range");
+    var alignOutput = document.getElementById("align-value");
+    alignOutput.innerHTML = alignCoefficientSlider.value;
 
     /**
      * Initialize FOV slider.
@@ -126,7 +125,8 @@ function init() {
 let lastTimestamp = 0;
 
 function gameLoop(timestamp) {
-    const deltaT = (timestamp - lastTimestamp) * WORLD.TIME_SCALE;
+    let deltaT = (timestamp - lastTimestamp) * WORLD.TIME_SCALE;
+    deltaT = Math.min(deltaT, 50);
 
     for (let i = 0; i < flock.length; i++) {
         const boid = flock[i];

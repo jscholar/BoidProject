@@ -5,6 +5,10 @@
 
 body {
   height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  overflow:scroll
 }
 
 .boids {
@@ -20,9 +24,9 @@ body {
   content: "";
   padding: 0;
   margin: 0;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-left: 25px solid rgb(62, 152, 255);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 18px solid rgb(75, 160, 255);
   transform: translate(-50%, -50%);
 }
 
@@ -31,11 +35,16 @@ body {
   justify-content: center;
   align-items: center;
   height: 100%;
+  overflow: hidden;
 }
 
 .canvas {
-    position: absolute;
-    background-color: #5e5e5e;
+    position: relative;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 5px;
+    background: linear-gradient(to top left, rgb(53, 53, 53), rgb(100, 100, 100));
+    /* background-color: #979797; */
     overflow: hidden;
 }
 
@@ -54,67 +63,78 @@ body {
   background-color: red;
 }
 
-.steering-line {
+.separate-line {
   display: inline;
   position: absolute;
   background-color: green;
-  width: 3px;
+  width: 2px;
 }
 
 .cohere-line {
   display: inline;
   position: absolute;
   background-color: blue;
-  width: 3px;
+  width: 2px;
 }
 
 .align-line {
   display: inline;
   position: absolute;
   background-color: yellow;
-  width: 3px;
+  width: 2px;
 }
 
 .slider-container {
+  position: relative;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 5px;
+  min-width: 500px;
+  min-height: 250px;
   display:flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  height: 20%;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 25px;
 }
 
 .separation-range {
   justify-content: center;
-  width: 50%;
+  width: 75%;
+  margin-bottom: 15px;
 }
 .separation-value {
   justify-content: center;
-  width: 50%;
+  width: 75%;
 }
 
 .cohere-range {
   justify-content: center;
-  width: 50%;
+  width: 75%;
+  margin-bottom: 15px;
 }
 .cohere-value {
   justify-content: center;
-  width: 50%;
+  width: 75%;
 }
 
 .align-range {
   justify-content: center;
-  width: 50%;
+  width: 75%;
+  margin-bottom: 15px;
 }
+
 .align-value {
   justify-content: center;
-  width: 50%;
+  width: 75%;
 }
 
 .fov-range {
   justify-content: center;
-  width: 50%;
+  width: 75%;
+  margin-bottom: 15px;
 }
 .fov-value {
   justify-content: center;
-  width: 50%;
+  width: 75%;
 }

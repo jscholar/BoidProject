@@ -2,9 +2,9 @@
   * All boids are contained inside this world.
   */
 const WORLD = {
-  CANVAS_WIDTH: 1500,
-  CANVAS_HEIGHT: 1000,
-  NUM_BOIDS: 100,
+  CANVAS_WIDTH: 1000,
+  CANVAS_HEIGHT: 800,
+  NUM_BOIDS: 50,
   TIME_SCALE: 0.05,
 };
 
