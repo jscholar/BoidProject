@@ -27,7 +27,7 @@ class Boid {
         // Coefficients
         this.separationCoefficient = 1e-1;
         this.cohereCoefficient = 1e-1;
-        this.alignCoefficient = 1e-1;
+        this.alignCoefficient = 1e-2;
 
         // Model position vector
         this.position = new Vector2D(Math.random() * WORLD.CANVAS_WIDTH, Math.random() * WORLD.CANVAS_WIDTH);
@@ -83,25 +83,52 @@ class Boid {
     */
     moveBoid(deltaT) {
         const { CANVAS_HEIGHT, CANVAS_WIDTH } = WORLD;
-        const offset = 20;
+        const offset = 200;
         const deltaV = new Vector2D(this.velocity.x, this.velocity.y);
         deltaV.scale(deltaT);
         this.position.add(deltaV);
 
+
         /**
          * If the boid has moved out of the canvas, wrap it back into the canvas
          */
-        if (this.position.x > CANVAS_WIDTH + offset) {
-            this.position.x = -offset;
+        // if (this.position.x > CANVAS_WIDTH + offset) {
+        //     this.position.x = -offset;
+        // }
+        // else if (this.position.x < -offset) {
+        //     this.position.x = CANVAS_WIDTH + offset;
+        // }
+        // if (this.position.y > CANVAS_HEIGHT + offset) {
+        //     this.position.y = -offset;
+        // }
+        // else if (this.position.y < -offset) {
+        //     this.position.y = CANVAS_HEIGHT + offset;
+        // }
+
+        /**
+         * If the boid has moved close to the wall, steer it towards the center of the canvas
+         */
+        const repelCoefficient = 0.5;
+        var steer = new Vector2D(0, 0);
+        var desiredVelocity = new Vector2D(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        desiredVelocity.subtract(this.position);
+
+        this.steerTowardsTarget(desiredVelocity);
+        const normalizedSteer = this.steerTowardsTarget(desiredVelocity);
+        normalizedSteer.scale(repelCoefficient);
+        steer.add(normalizedSteer);
+
+        if (this.position.x > CANVAS_WIDTH - offset) {
+            this.velocity.add(steer.scale(deltaT));
         }
-        else if (this.position.x < -offset) {
-            this.position.x = CANVAS_WIDTH + offset;
+        if (this.position.x < offset) {
+            this.velocity.add(steer.scale(deltaT));
         }
-        if (this.position.y > CANVAS_HEIGHT + offset) {
-            this.position.y = -offset;
+        if (this.position.y > CANVAS_HEIGHT - offset) {
+            this.velocity.add(steer.scale(deltaT));
         }
-        else if (this.position.y < -offset) {
-            this.position.y = CANVAS_HEIGHT + offset;
+        if (this.position.y < offset) {
+            this.velocity.add(steer.scale(deltaT));
         }
     }
 

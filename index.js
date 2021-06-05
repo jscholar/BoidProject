@@ -16,7 +16,7 @@ function init() {
      * Initialize Boids.
      */
     for (let i = 0; i < WORLD.NUM_BOIDS; i++) {
-        const isHighlighted = i === 0;
+        const isHighlighted = i === -1; // temp, change back to 0 to see highlighted boid
         const boid = new Boid({ id: i, isHighlighted });
         appendFlock(boid);
     }
