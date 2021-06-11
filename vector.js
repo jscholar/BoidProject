@@ -5,7 +5,7 @@ class Vector2D {
     }
 
     /**
-     * Adds this vector2 to this vector
+     * Adds vector2 to this vector
      * 
      * @param {Vector2D} vector2
      */
@@ -15,7 +15,7 @@ class Vector2D {
     }
 
     /**
-     * Subtracts this vector2 from this vector
+     * Subtracts vector2 from this vector
      * @param {Vector2D} vector2
      */
     subtract(vector2) {

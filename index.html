@@ -7,22 +7,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A title</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300&display=swap" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Mukta+Mahee:wght@300&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div class="canvas-container" id="canvas-container"></div>
     <div class="slider-container" id="slider-container">
-        <p>Separation Coefficient: <span id="separation-value" class=separation-value></span></p>
-        <input type="range" min="0" max="100" value="12" id="separation-range" class="separation-range">
+        <p>Separation: <span id="separation-value" class="separation-value"></span></p>
+        <input type="range" min="0" max="50" value="25" id="separation-range" class="separation-range">
 
-        <p>Cohere Coefficient: <span id="cohere-value" class=cohere-value></span></p>
-        <input type="range" min="0" max="100" value="12" id="cohere-range" class="cohere-range">
+        <p>Cohesion: <span id="cohere-value" class="cohere-value"></span></p>
+        <input type="range" min="0" max="50" value="25" id="cohere-range" class="cohere-range">
 
-        <p>Align Coefficient: <span id="align-value" class=align-value></span></p>
-        <input type="range" min="0" max="100" value="7" id="align-range" class="align-range">
+        <p>Alignment: <span id="align-value" class="align-value"></span></p>
+        <input type="range" min="0" max="50" value="25" id="align-range" class="align-range">
 
-        <p>Boid View Range: <span id="fov-value" class=fov-value></span></p>
-        <input type="range" min="0" max="300" value="125" id="fov-range" class="fov-range">
+        <p>Field Of View: <span id="fov-value" class="fov-value"></span></p>
+        <input type="range" min="0" max="300" value="150" id="fov-range" class="fov-range">
+
+        <p>Toggle Field Of View</p>
+        <button id="toggle-fov" class="button">ON</button>
+
+        <p>Separate Vector</p>
+        <button id="toggle-separate" class="button">ON</button>
+
+        <p>Cohere Vector</p>
+        <button id="toggle-cohere" class="button">ON</button>
+
+        <p>Align Vector</p>
+        <button id="toggle-align" class="button">ON</button>
+
+        <p>Neighbor Lines</p>
+        <button id="toggle-neighbors" class="button">ON</button>
+
+
     </div>
 
 </body>

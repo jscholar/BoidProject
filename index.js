@@ -1,4 +1,6 @@
 import { Boid } from './boid.js';
+import { randomRange, pickOneTriadic, pickOneTetradic } from './utils.js'
+import { Vector2D } from './vector.js'
 import { WORLD, appendFlock, flock } from "./world.js";
 
 function init() {
@@ -16,8 +18,12 @@ function init() {
      * Initialize Boids.
      */
     for (let i = 0; i < WORLD.NUM_BOIDS; i++) {
-        const isHighlighted = i === -1; // temp, change back to 0 to see highlighted boid
+        const isHighlighted = i === 0;
         const boid = new Boid({ id: i, isHighlighted });
+        // rgb(75, 160, 255);
+        boid.boidElement.style.borderLeftColor = `rgb(${randomRange(0, 40)},${randomRange(80, 100)},${randomRange(180, 230)})`;
+        // boid.boidElement.style.borderLeftColor = pickOneTetradic("#3E98FF", "#FF3D98", "#98FF3D", "#FFA53D");
+        // boid.boidElement.style.borderLeftColor = pickOneTriadic("#D5F7D4", "#D4F7F6", "#F7F6D4");
         appendFlock(boid);
     }
 
@@ -28,7 +34,7 @@ function init() {
      */
     var defaultSeparationCoefficient = 1e-2;
     var defaultCohereCoefficient = 1e-2;
-    var defaultAlignCoefficient = 1e-2;
+    var defaultAlignCoefficient = 1e-3;
 
     /**
      * Initialize separate slider.
@@ -59,9 +65,9 @@ function init() {
     fovOutput.innerHTML = fovSlider.value;
 
     /**
-     * Update separation scroller
+     * Update SEPARATE scroller
      */
-    // Displays separation coefficient value.
+    // Displays SEPARATE coefficient value.
     separationCoefficientSlider.oninput = function () {
         separationOutput.innerHTML = this.value;
     }
@@ -75,9 +81,9 @@ function init() {
     });
 
     /**
-     * Update cohere scroller.
+     * Update COHERE scroller.
      */
-    // Displays cohere coefficient value.
+    // Displays COHERE coefficient value.
     cohereCoefficientSlider.oninput = function () {
         cohereOutput.innerHTML = this.value;
     }
@@ -91,9 +97,9 @@ function init() {
     });
 
     /**
-     * Update align scroller.
+     * Update ALIGN scroller.
      */
-    // Displays align coefficient value.
+    // Displays ALIGN coefficient value.
     alignCoefficientSlider.oninput = function () {
         alignOutput.innerHTML = this.value;
     }
@@ -107,19 +113,109 @@ function init() {
     });
 
     /**
-     * Update field of view scroller.
+     * Update FIELD OF VIEW scroller.
      */
-    // Displays fov value.
+    // Displays FIELD OF VIEW value.
     fovSlider.oninput = function () {
         fovOutput.innerHTML = this.value;
     }
 
-    // Updates boid's FOV based on scroller value.
+    // Updates boid's FIELD OF VIEW based on scroller value.
     fovSlider.addEventListener("input", function () {
         flock.forEach((boid) => {
             boid.range = this.value;
+            flock[0].FOVElement.style.width = `${flock[0].range * 2}px`;
+            flock[0].FOVElement.style.height = `${flock[0].range * 2}px`;
         })
     });
+
+    /**
+     * Toggles FIELD OF VIEW on and off.
+     * Kind of janky because it just reduces the size of the FOV element and doesn't actually remove it.
+     */
+    var fovButton = document.getElementById("toggle-fov");
+    fovButton.onclick = function () {
+        if (fovButton.innerText == "OFF") {
+            flock[0].FOVEnabled = false;
+            fovButton.innerText = "ON";
+            flock[0].FOVElement.style.width = 0;
+            flock[0].FOVElement.style.height = 0;
+        }
+        else if (fovButton.innerText == "ON") {
+            flock[0].FOVEnabled = true;
+            fovButton.innerText = "OFF";
+            flock[0].FOVElement.style.width = `${flock[0].range * 2}px`;
+            flock[0].FOVElement.style.height = `${flock[0].range * 2}px`;
+        }
+    }
+
+    /**
+     * Toggles separate steer element on and off.
+     */
+    var separateButton = document.getElementById("toggle-separate");
+    separateButton.onclick = function () {
+        if (separateButton.innerText == "OFF") {
+            separateButton.innerText = "ON";
+            var steerElementScale = new Vector2D(0, 0);
+            flock[0].drawLine(flock[0].separateSteerElement, steerElementScale);
+            flock[0].showSeparate = false;
+        }
+        else if (separateButton.innerText == "ON") {
+            separateButton.innerText = "OFF";
+            flock[0].showSeparate = true;
+        }
+    }
+
+    /**
+     * Toggles cohere steer element on and off.
+     */
+    var cohereButton = document.getElementById("toggle-cohere");
+    cohereButton.onclick = function () {
+        if (cohereButton.innerText == "OFF") {
+            cohereButton.innerText = "ON";
+            var steerElementScale = new Vector2D(0, 0);
+            flock[0].drawLine(flock[0].cohereSteerElement, steerElementScale);
+            flock[0].showCohere = false;
+        }
+        else if (cohereButton.innerText == "ON") {
+            cohereButton.innerText = "OFF";
+            flock[0].showCohere = true;
+        }
+    }
+
+    /**
+     * Toggles align steer element on and off.
+     */
+    var alignButton = document.getElementById("toggle-align");
+    alignButton.onclick = function () {
+        if (alignButton.innerText == "OFF") {
+            alignButton.innerText = "ON";
+            var steerElementScale = new Vector2D(0, 0);
+            flock[0].drawLine(flock[0].alignSteerElement, steerElementScale);
+            flock[0].showAlign = false;
+        }
+        else if (alignButton.innerText == "ON") {
+            alignButton.innerText = "OFF";
+            flock[0].showAlign = true;
+        }
+    }
+
+    /**
+     * Toggles neighbor line element on and off.
+     */
+    var neighborButton = document.getElementById("toggle-neighbors");
+    neighborButton.onclick = function () {
+        if (neighborButton.innerText == "OFF") {
+            neighborButton.innerText = "ON";
+            flock[0].showNeighbors = false;
+        }
+        else if (neighborButton.innerText == "ON") {
+            neighborButton.innerText = "OFF";
+            flock[0].showNeighbors = true;
+        }
+    }
+
+
 }
 
 let lastTimestamp = 0;
