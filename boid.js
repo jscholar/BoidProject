@@ -144,15 +144,49 @@ class Boid {
         return steer;
     }
 
+    /**
+     * Creates FOV element with blind spot
+     */
     toggleFOV() {
         if (!this.FOVEnabled) {
-            this.FOVElement = document.createElement("div");
-            this.FOVElement.classList.add("FOV");
-            this.FOVElement.style.width = `${0}px`; // set to this.range * 2 to default on
-            this.FOVElement.style.height = `${0}px`; // set to this.range * 2 to default on
-            this.boidElement.appendChild(this.FOVElement);
+            const circumference = Math.PI * 2 * this.range / 2;
+            const viewPercentage = ((2 * this.leftSideFOV / (Math.PI / 180)) / 360) * 100; // Percentage of FOV that is not blind
+
+            // Create SVG element to contain FOV and Blindspot wedge
+            this.SVGElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            this.SVGElement.setAttributeNS(null, "height", `${this.range * 2}`);
+            this.SVGElement.setAttributeNS(null, "width", `${this.range * 2}`);
+            this.SVGElement.classList.add("FOV");
+
+            // Create blindspot wedge by making the FOV a certain percentage of the circle.
+            this.BlindSpotElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            this.BlindSpotElement.setAttributeNS(null, "height", `${this.range * 2}`);
+            this.BlindSpotElement.setAttributeNS(null, "width", `${this.range * 2}`);
+            this.BlindSpotElement.setAttributeNS(null, "cx", `${this.range * 2}`);
+            this.BlindSpotElement.setAttributeNS(null, "cy", `${this.range * 2}`);
+            this.BlindSpotElement.setAttributeNS(null, "r", `${this.range / 2}`);
+            this.BlindSpotElement.setAttributeNS(null, "fill", "none");
+
+            // Stroke creates the pie slice / blind spot
+            this.BlindSpotElement.setAttributeNS(null, "stroke", "grey");
+            this.BlindSpotElement.setAttributeNS(null, "stroke-opacity", "0");
+
+            // Stroke width hould be same as radius of FOV
+            this.BlindSpotElement.setAttributeNS(null, "stroke-width", `${this.range}`)
+
+            /*
+             * We will only need one of the dashes from the dasharray to be our blindspot/slice
+             * to do this, we increase the spacing between each wedge so we only see one.
+             * the stroke-dasharray gap is set to the circumference of the blindSpotElement circle.
+             * x value = viewPercentage   |    y value = circumference = 2 * pi * radius
+             */
+
+            this.BlindSpotElement.setAttributeNS(null, "stroke-dasharray", `${viewPercentage * circumference / 100} ${circumference}`);
+            this.BlindSpotElement.classList.add("blindspot");
+            this.SVGElement.appendChild(this.BlindSpotElement);
+            this.boidElement.appendChild(this.SVGElement);
         } else {
-            this.FOVElement.remove();
+            this.SVGElement.remove();
         }
         this.FOVEnabled = !this.FOVEnabled
     }

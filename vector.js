@@ -21,8 +21,6 @@ class Vector2D {
     subtract(vector2) {
         this.x -= vector2.x;
         this.y -= vector2.y;
-        // this.x = vector2.x - this.x
-        // this.y = vector2.y - this.y
     }
 
     /**

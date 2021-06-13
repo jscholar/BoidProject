@@ -138,14 +138,12 @@ function init() {
         if (fovButton.innerText == "OFF") {
             flock[0].FOVEnabled = false;
             fovButton.innerText = "ON";
-            flock[0].FOVElement.style.width = 0;
-            flock[0].FOVElement.style.height = 0;
+            flock[0].BlindSpotElement.setAttributeNS(null, "stroke-opacity", "0");
         }
         else if (fovButton.innerText == "ON") {
             flock[0].FOVEnabled = true;
             fovButton.innerText = "OFF";
-            flock[0].FOVElement.style.width = `${flock[0].range * 2}px`;
-            flock[0].FOVElement.style.height = `${flock[0].range * 2}px`;
+            flock[0].BlindSpotElement.setAttributeNS(null, "stroke-opacity", "0.15");
         }
     }
 

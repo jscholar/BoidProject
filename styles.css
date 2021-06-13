@@ -5,10 +5,11 @@
 
 body {
   height: 100vh;
+  background-color: black;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  overflow:scroll
+  overflow: auto;
 }
 
 .boids {
@@ -43,15 +44,22 @@ body {
     border-width: 3px;
     border-style: solid;
     border-radius: 5px;
+    border-color: white;
     background: linear-gradient(0.5turn, #252525,  #20262c, #252525);
     overflow: hidden;
 }
 
 .FOV {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.05);
+  /* background-color: rgba(255, 255, 255, 0.05); */
   transform: translate(-50%, -50%);
   border-radius: 50%;
+}
+
+.blindspot {
+  position: relative;
+  transform: translate(-9.15%, 70.5%) rotate(230deg);
+  transform-origin: center;
 }
 
 .neighbor-line {
@@ -88,7 +96,7 @@ body {
   border-width: 3px;
   border-style: solid;
   border-radius: 5px;
-  border-color: black;
+  border-color: white;
   min-width: 500px;
   min-height: 250px;
   display:flex;
@@ -150,7 +158,6 @@ body {
   margin-top: 10px;
   margin-bottom: 15px;
   background-color: grey;
-  /* font-family: 'Cairo', sans-serif; */
   font-family: 'Mukta Mahee', sans-serif;
   font-size: 18px;
   font-weight: bold;
@@ -172,3 +179,4 @@ body {
 #toggle-neighbors{
   color: red;
 }
+
