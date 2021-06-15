@@ -145,18 +145,20 @@ function init() {
      */
     var fovButton = document.getElementById("toggle-fov");
     fovButton.onclick = function () {
+        // turn off
         if (fovButton.innerText == "Field Of View OFF") {
             flock[0].FOVEnabled = false;
             fovButton.innerText = "Field Of View ON";
             flock[0].BlindSpotElement.setAttributeNS(null, "stroke-opacity", "0");
             this.classList.remove('button-on')
-            this.classList.add('button-off');
+            this.classList.add('button');
         }
+        // turn on
         else if (fovButton.innerText == "Field Of View ON") {
             flock[0].FOVEnabled = true;
             fovButton.innerText = "Field Of View OFF";
             flock[0].BlindSpotElement.setAttributeNS(null, "stroke-opacity", "0.2");
-            this.classList.remove('button-off')
+            this.classList.remove('button')
             this.classList.add('button-on');
         }
     }
@@ -166,18 +168,20 @@ function init() {
      */
     var separateButton = document.getElementById("toggle-separate");
     separateButton.onclick = function () {
+        // turn off
         if (separateButton.innerText == "Separate Vector OFF") {
             separateButton.innerText = "Separate Vector ON";
             var steerElementScale = new Vector2D(0, 0);
             flock[0].drawLine(flock[0].separateSteerElement, steerElementScale);
             flock[0].showSeparate = false;
             this.classList.remove('button-on')
-            this.classList.add('button-off');
+            this.classList.add('button');
         }
+        // turn on
         else if (separateButton.innerText == "Separate Vector ON") {
             separateButton.innerText = "Separate Vector OFF";
             flock[0].showSeparate = true;
-            this.classList.remove('button-off')
+            this.classList.remove('button')
             this.classList.add('button-on');
         }
     }
@@ -193,12 +197,12 @@ function init() {
             flock[0].drawLine(flock[0].cohereSteerElement, steerElementScale);
             flock[0].showCohere = false;
             this.classList.remove('button-on')
-            this.classList.add('button-off');
+            this.classList.add('button');
         }
         else if (cohereButton.innerText == "Cohere Vector ON") {
             cohereButton.innerText = "Cohere Vector OFF";
             flock[0].showCohere = true;
-            this.classList.remove('button-off')
+            this.classList.remove('button')
             this.classList.add('button-on');
         }
     }
@@ -214,12 +218,12 @@ function init() {
             flock[0].drawLine(flock[0].alignSteerElement, steerElementScale);
             flock[0].showAlign = false;
             this.classList.remove('button-on')
-            this.classList.add('button-off');
+            this.classList.add('button');
         }
         else if (alignButton.innerText == "Align Vector ON") {
             alignButton.innerText = "Align Vector OFF";
             flock[0].showAlign = true;
-            this.classList.remove('button-off')
+            this.classList.remove('button')
             this.classList.add('button-on');
         }
     }
@@ -233,12 +237,12 @@ function init() {
             neighborButton.innerText = "Neighbor Lines ON";
             flock[0].showNeighbors = false;
             this.classList.remove('button-on')
-            this.classList.add('button-off');
+            this.classList.add('button');
         }
         else if (neighborButton.innerText == "Neighbor Lines ON") {
             neighborButton.innerText = "Neighbor Lines OFF";
             flock[0].showNeighbors = true;
-            this.classList.remove('button-off')
+            this.classList.remove('button')
             this.classList.add('button-on');
         }
     }

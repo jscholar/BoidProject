@@ -160,16 +160,30 @@ body {
   border-color: whitesmoke;
 }
 
-.button-on {
-  background-color: rgb(211, 211, 211, 0.5);
-  border-color:rgb(0, 130, 252, 0.5);
-  border-width: 0.1rem;
+.button:hover {
+  border-width: 0.15rem;
+  border-color:rgb(0, 130, 252, 0.7);
 }
 
-.button-off {
-  background:linear-gradient(rgb(255, 255, 255), rgb(189, 189, 189));
+.button-on {
+  width: fit-content;
+  padding: 10px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-family: 'Mukta Mahee', sans-serif;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 1rem;
+  background-color: (211, 211, 211, 0.5);
   border-color: whitesmoke;
 }
+
+.button-on:hover {
+  border-width: 0.12rem;
+  border-color:rgb(0, 130, 252, 0.7);
+}
+
+
 
 .button-description {
   color: aqua;
@@ -190,4 +204,3 @@ body {
 #toggle-neighbors{
   color: red;
 }
-
