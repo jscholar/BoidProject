@@ -36,10 +36,10 @@ class Boid {
         this.showNeighbors = false;
 
         // Model position vector
-        this.position = new Vector2D(Math.random() * WORLD.CANVAS_WIDTH, Math.random() * WORLD.CANVAS_WIDTH);
+        this.position = new Vector2D(WORLD.CANVAS_WIDTH / 2, WORLD.CANVAS_HEIGHT / 2);
 
         // Model velocity vector
-        this.velocity = new Vector2D(Math.random() * 10 - 5, Math.random() * 10 - 5);
+        this.velocity = new Vector2D(1, 1);
         this.velocity.scale(this.maxSpeed);
 
         this.initializeDOMElements(isHighlighted);
@@ -162,8 +162,8 @@ class Boid {
             this.BlindSpotElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             this.BlindSpotElement.setAttributeNS(null, "height", `${this.range * 2}`);
             this.BlindSpotElement.setAttributeNS(null, "width", `${this.range * 2}`);
-            this.BlindSpotElement.setAttributeNS(null, "cx", `${this.range * 2}`);
-            this.BlindSpotElement.setAttributeNS(null, "cy", `${this.range * 2}`);
+            this.BlindSpotElement.setAttributeNS(null, "cx", `${0}`);
+            this.BlindSpotElement.setAttributeNS(null, "cy", `${0}`);
             this.BlindSpotElement.setAttributeNS(null, "r", `${this.range / 2}`);
             this.BlindSpotElement.setAttributeNS(null, "fill", "none");
 
@@ -180,6 +180,8 @@ class Boid {
              * the stroke-dasharray gap is set to the circumference of the blindSpotElement circle.
              * x value = viewPercentage   |    y value = circumference = 2 * pi * radius
              */
+            console.log(this.BlindSpotElement);
+            console.log(this.SVGElement);
 
             this.BlindSpotElement.setAttributeNS(null, "stroke-dasharray", `${viewPercentage * circumference / 100} ${circumference}`);
             this.BlindSpotElement.classList.add("blindspot");

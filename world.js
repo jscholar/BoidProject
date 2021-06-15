@@ -4,8 +4,8 @@
 const WORLD = {
   CANVAS_WIDTH: 1000,
   CANVAS_HEIGHT: 800,
-  NUM_BOIDS: 50,
-  TIME_SCALE: 0.10,
+  NUM_BOIDS: 1,
+  TIME_SCALE: 0.0,
 };
 
 // List containing all boids in the world
