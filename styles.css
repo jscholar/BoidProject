@@ -52,12 +52,12 @@ body {
 .FOV {
   position: absolute;
   /* background-color: rgba(255, 255, 255, 0.05); */
-  /* transform: translate(-50%, -50%); */
+  transform: translate(-54%, -50%) rotate(230deg);
 }
 
 .blindspot {
   position: relative;
-  /* transform: translate(-9.15%, 70.5%) rotate(230deg); */
+  /* transform: rotate(230deg); */
   transform-origin: center;
 }
 

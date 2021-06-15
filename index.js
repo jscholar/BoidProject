@@ -124,19 +124,18 @@ function init() {
     fovSlider.addEventListener("input", function () {
         flock.forEach((boid) => {
             boid.range = this.value;
-            const circumference = Math.PI * 2 * flock[0].range / 2;
-            const viewPercentage = ((2 * flock[0].leftSideFOV / (Math.PI / 180)) / 360) * 100; // Percentage of FOV that is not blind
-            flock[0].SVGElement.setAttributeNS(null, "height", `${flock[0].range * 2}`);
-            flock[0].SVGElement.setAttributeNS(null, "width", `${flock[0].range * 2}`);
-            flock[0].BlindSpotElement.setAttributeNS(null, "height", `${flock[0].range * 2}`);
-            flock[0].BlindSpotElement.setAttributeNS(null, "width", `${flock[0].range * 2}`);
-            flock[0].BlindSpotElement.setAttributeNS(null, "cx", `${flock[0].range * 2}`);
-            flock[0].BlindSpotElement.setAttributeNS(null, "cy", `${flock[0].range * 2}`);
-            flock[0].BlindSpotElement.setAttributeNS(null, "r", `${flock[0].range / 2}`);
-            flock[0].BlindSpotElement.setAttributeNS(null, "stroke-width", `${flock[0].range}`)
-            flock[0].BlindSpotElement.setAttributeNS(null, "stroke-dasharray", `${viewPercentage * circumference / 100} ${circumference}`);
-            // flock[0].BlindSpotElement.setAttributeNS(null, "transform", `translate(${flock[0].position.x / 100} ${flock[0].position.y / 100})`);
         })
+        const circumference = Math.PI * 2 * flock[0].range / 2;
+        const viewPercentage = ((2 * flock[0].leftSideFOV / (Math.PI / 180)) / 360) * 100; // Percentage of FOV that is not blind
+        flock[0].SVGElement.setAttributeNS(null, "height", `${flock[0].range * 2}`);
+        flock[0].SVGElement.setAttributeNS(null, "width", `${flock[0].range * 2}`);
+        flock[0].BlindSpotElement.setAttributeNS(null, "height", `${flock[0].range * 2}`);
+        flock[0].BlindSpotElement.setAttributeNS(null, "width", `${flock[0].range * 2}`);
+        flock[0].BlindSpotElement.setAttributeNS(null, "cx", `${flock[0].range}`);
+        flock[0].BlindSpotElement.setAttributeNS(null, "cy", `${flock[0].range}`);
+        flock[0].BlindSpotElement.setAttributeNS(null, "r", `${flock[0].range / 2}`);
+        flock[0].BlindSpotElement.setAttributeNS(null, "stroke-width", `${flock[0].range}`)
+        flock[0].BlindSpotElement.setAttributeNS(null, "stroke-dasharray", `${viewPercentage * circumference / 100} ${circumference}`);
     });
 
     /**
