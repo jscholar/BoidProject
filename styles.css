@@ -156,6 +156,7 @@ body {
   font-size: 1em;
   font-weight: bold;
   border-radius: 1rem;
+  background:linear-gradient(rgb(255, 255, 255), rgb(189, 189, 189));
   border-color: whitesmoke;
 }
 
