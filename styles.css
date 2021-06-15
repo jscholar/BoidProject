@@ -4,12 +4,13 @@
 }
 
 body {
-  height: 100vh;
-  background-color: black;
+  min-height: 100vh;
+  min-width: 100vw;
+  background: linear-gradient(0.5turn, #ffffff, #eeeeee, #dddddd);
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  overflow: auto;
+  overflow: visible;
 }
 
 .boids {
@@ -36,28 +37,24 @@ body {
   justify-content: center;
   align-items: center;
   height: 100%;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 .canvas {
     position: relative;
     border-width: 3px;
     border-style: solid;
-    border-radius: 5px;
-    border-color: white;
-    background: linear-gradient(0.5turn, #252525,  #20262c, #252525);
+    border-color: black;
     overflow: hidden;
 }
 
 .FOV {
   position: absolute;
-  /* background-color: rgba(255, 255, 255, 0.05); */
   transform: translate(-54%, -50%) rotate(230deg);
 }
 
 .blindspot {
   position: relative;
-  /* transform: rotate(230deg); */
   transform-origin: center;
 }
 
@@ -91,22 +88,21 @@ body {
 }
 
 .slider-container {
-  position: relative;
+  position: absolute;
   border-width: 3px;
   border-style: solid;
-  border-radius: 5px;
-  border-color: white;
-  min-width: 500px;
-  min-height: 250px;
+  border-radius: 1.1rem;
+  border-color: rgb(0, 130, 252);
+  min-width: 12vw;
+  min-height: 12vh;
   display:flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
   overflow: hidden;
   font-family: 'Mukta Mahee', sans-serif;
-  font-size: 20px;
-  color: white;
-  background: linear-gradient(0.5turn, #252525,  #20262c, #252525);
+  font-size: 1.5em;
+  font-weight: bold;
+  color: rgb(29, 29, 29);
+  margin-left: 1.5rem;
 }
 
 .separation-range {
@@ -152,17 +148,31 @@ body {
 }
 
 .button {
-  justify-content: center;
   width: fit-content;
   padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 15px;
-  background-color: grey;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   font-family: 'Mukta Mahee', sans-serif;
-  font-size: 18px;
+  font-size: 1em;
   font-weight: bold;
+  border-radius: 1rem;
+  border-color: whitesmoke;
 }
 
+.button-on {
+  background-color: rgb(211, 211, 211, 0.5);
+  border-color:rgb(0, 130, 252, 0.5);
+  border-width: 0.1rem;
+}
+
+.button-off {
+  background:linear-gradient(rgb(255, 255, 255), rgb(189, 189, 189));
+  border-color: whitesmoke;
+}
+
+.button-description {
+  color: aqua;
+}
 
 #toggle-separate{
   color: green;

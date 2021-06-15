@@ -1,5 +1,4 @@
-import { WORLD, appendFlock, flock } from "./world.js";
-import { HIGHLIGHT_CONFIG } from "./config.js";
+import { WORLD } from "./world.js";
 import { distance2D } from "./utils.js";
 import { Vector2D } from "./vector.js";
 
@@ -34,7 +33,6 @@ class Boid {
         this.showCohere = false;
         this.showSeparate = false;
         this.showNeighbors = false;
-        this.showRepel = false;
 
         // Model position vector
         this.position = new Vector2D(Math.random() * WORLD.CANVAS_WIDTH, Math.random() * WORLD.CANVAS_HEIGHT);
@@ -67,7 +65,7 @@ class Boid {
             this.alignSteerElement = document.createElement("div");
             this.alignSteerElement.classList.add("align-line");
             document.getElementById("canvas").appendChild(this.alignSteerElement);
-            
+
             this.repelSteerElement = document.createElement("div");
             this.repelSteerElement.classList.add("align-line");
             document.getElementById("canvas").appendChild(this.repelSteerElement);
@@ -83,18 +81,19 @@ class Boid {
         this.separate(deltaT);
         this.cohere(deltaT);
         this.align(deltaT);
-        this.repel(deltaT);
 
-        // Control speed of boid
+        // Apply constant velocity for boid
         this.speedControl();
-
         this.moveBoid(deltaT);
+
+        // Ensure that the boid does not go towards infinity and beyond.
+        this.repel(deltaT);
         this.superGravity(deltaT);
     }
 
     /**
      * Move the boid's position
-    */
+     */
     moveBoid(deltaT) {
         const deltaV = new Vector2D(this.velocity.x, this.velocity.y);
         deltaV.scale(deltaT);
@@ -102,7 +101,7 @@ class Boid {
     }
 
     /**
-     * If the boid has moved close to the wall, totalSteer it towards the center of the canvas
+     * If the boid has moved close to the wall, steer it towards the center of the canvas
      */
     repel(deltaT) {
         const offset = 20;
@@ -114,33 +113,31 @@ class Boid {
         const repelCoefficient = 0.5;
 
         var totalSteer = new Vector2D(0, 0);
-        
+
+        // Repel away from right wall
         if (this.position.x > rightWall - this.range) {
-            // Repel away from right wall
             const repelSteerX = this.repelSteer(-1, 0, Math.abs(rightWall - this.position.x));
             totalSteer.add(repelSteerX);
+        }
 
-        } else if (this.position.x < this.range) {
-            // Repel away from left wall
+        // Repel away from left wall
+        else if (this.position.x < this.range) {
             const repelSteerX = this.repelSteer(1, 0, Math.abs(this.position.x - leftWall));
             totalSteer.add(repelSteerX);
         }
+
         // Repel away from top wall
         if (this.position.y > bottomWall - this.range) {
             const repelSteerY = this.repelSteer(0, -1, Math.abs(bottomWall - this.position.y));
             totalSteer.add(repelSteerY);
+        }
 
         // Repel away from bottom wall
-        } else if (this.position.y < this.range) {
+        else if (this.position.y < this.range) {
             const repelSteerY = this.repelSteer(0, 1, Math.abs(this.position.y - topWall));
             totalSteer.add(repelSteerY);
         }
 
-        if (this.showRepel) {
-            var repelElementScale = new Vector2D(totalSteer.x, totalSteer.y);
-            this.drawLine(this.repelSteerElement, repelElementScale.scale(100));
-        }
-        
         this.velocity.add(totalSteer.scale(deltaT * repelCoefficient));
     }
 
