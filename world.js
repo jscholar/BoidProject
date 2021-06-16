@@ -3,7 +3,7 @@
   */
 const WORLD = {
   CANVAS_WIDTH: screen.width,
-  CANVAS_HEIGHT: screen.height * .85,
+  CANVAS_HEIGHT: screen.height,
   NUM_BOIDS: 100,
   TIME_SCALE: 0.10,
 };
