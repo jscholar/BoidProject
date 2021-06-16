@@ -3,9 +3,9 @@
   */
 const WORLD = {
   CANVAS_WIDTH: screen.width,
-  CANVAS_HEIGHT: screen.height * .93,
-  NUM_BOIDS: (screen.width + screen.height) / 25,
-  TIME_SCALE: 0.075,
+  CANVAS_HEIGHT: screen.height * .85,
+  NUM_BOIDS: 100,
+  TIME_SCALE: 0.10,
 };
 
 // List containing all boids in the world
