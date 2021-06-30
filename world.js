@@ -2,10 +2,10 @@
   * All boids are contained inside this world.
   */
 const WORLD = {
-  CANVAS_WIDTH: 1000,
-  CANVAS_HEIGHT: 1000,
-  NUM_BOIDS: 50,
-  TIME_SCALE: 0.1,
+  CANVAS_WIDTH: screen.width,
+  CANVAS_HEIGHT: screen.height,
+  NUM_BOIDS: 100,
+  TIME_SCALE: 0.10,
 };
 
 // List containing all boids in the world
