@@ -8,6 +8,7 @@ Live Preview: https://andrewjle.github.io/BoidProject/
 **BOID CONTROLLER**
 
 **Toggles**
+
 Note: Toggles will only be performed on the boid of interest whom is colored black, however, it is a representation of the whole flock.
 
 Field Of View - Displays a highlighted region representing the boid's field of view. The highlighted region is where the boid can see and detect other boids. There is a blind spot located behind the boid where the boid is not able to see or detect other boids.
@@ -21,6 +22,7 @@ Alignment Vector - Displays the direction and magnitude that the boid is steerin
 Neighbor Lines - Displays a line to and from any neighboring boid within the boid's field of view (Red). The boid calculates the distance of all other boids and if its position is within its vision range, it is considered a neighbor.
 
 **Sliders**
+
 Note: Sliders will affect every boid in the flock. A bigger coefficient correlates to a more strongly weighted behavior. All coefficient values are arbitrary.
 
 Field of View - The view range of each boid. 1 indicates a blind boid, while 300 represents a boid who is able to 300 pixels out in a 360 degree radius, excluding the blind spot.
