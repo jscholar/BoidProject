@@ -19,6 +19,8 @@ class Boid {
     leftSideFOV = 130 * (Math.PI / 180);
     rightSideFOV = 130 * (Math.PI / 180);
 
+    position;
+
     constructor({ id, isHighlighted }) {
         this.id = id;
         this.highlighted = isHighlighted;
@@ -73,9 +75,11 @@ class Boid {
         }
     }
 
-    update(flock, deltaT) {
+    update(flock: Boid[], deltaT) {
         // Search this boid for any nearby neighbors
         this.findNeighborsWithinRange(flock);
+
+        flock[0].drawBoid();
 
         // Apply boid rules
         this.separate(deltaT);
@@ -429,7 +433,7 @@ class Boid {
     /**
      * Draws the boid body
      */
-    drawBoid() {
+    drawBoid(): void {
         const styles = {};
         const transforms = [];
 

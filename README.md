@@ -1,6 +1,10 @@
 # BoidProject
-
 Boids is an artificial life program that simulates the behavior of birds, fish, and swarms.
+
+<br>
+
+## Overview
+---
 
 Live Preview: https://andrewjle.github.io/BoidProject/
 
@@ -32,3 +36,24 @@ Separation Coefficient - How strongly a boid will separate from its neighbors. A
 Cohesion Coefficient - How strongly a boid will steer towards its neighbors. A coefficient of 0 indicates that a boid will not make any attempts to move towards its neighbors, while a 50 indicates that a boid will strongly steers towards the center of mass of its neighbors.
 
 Alignment Coefficient - How strongly a boid will steer to align with its neighbor's general direction. A coefficient of 0 indicates that a boid will not make any attempts to align with its neighbors, while a 50 indicates that a boid will strongly steer in the general direction of its neighbors.
+
+<br>
+
+## Contributing
+---
+### Getting Started
+1. Install the npm libraries
+
+> `npm install`
+
+2. Build the project
+
+> // To build the project into `/lib`:
+>
+> `npm run build`
+
+<br>
+
+> // To build the project into `/lib` and watches for changes. Recommened to use this in development alongside a live-server:
+>
+>`npm run build-watch`

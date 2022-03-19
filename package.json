@@ -1,0 +1,29 @@
+{
+  "name": "jscholar-boids",
+  "version": "1.0.0",
+  "description": "An exploration of boids algorithm along with computer graphics.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf lib",
+    "build": "babel src -d lib --extensions \".ts,.tsx\" --copy-files",
+    "build-watch": "babel --watch src -d lib --extensions \".ts,.tsx\" --copy-files"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jscholar/BoidProject.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jscholar/BoidProject/issues"
+  },
+  "homepage": "https://github.com/jscholar/BoidProject#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.8",
+    "@babel/preset-typescript": "^7.16.7",
+    "typescript": "^4.6.2"
+  }
+}
