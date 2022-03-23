@@ -1,6 +1,8 @@
-import { WORLD } from "./world.js";
-import { distance2D } from "./utils.js";
-import { Vector2D } from "./vector.js";
+import { ConeGeometry } from "three";
+
+import { WORLD } from "../scripts/world.js";
+import { distance2D } from "../scripts/utils.js";
+import { Vector2D } from "../scripts/vector.js";
 
 // Boid object
 class Boid {
@@ -509,4 +511,4 @@ class Boid {
     }
 }
 
-export { Boid }
+export default Boid;

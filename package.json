@@ -21,6 +21,10 @@
     "url": "https://github.com/jscholar/BoidProject/issues"
   },
   "homepage": "https://github.com/jscholar/BoidProject#readme",
+  "dependencies": {
+    "@types/three": "^0.138.0",
+    "three": "^0.138.3"
+  },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.8",
