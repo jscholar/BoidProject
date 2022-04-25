@@ -32,8 +32,13 @@ const config = {
     rules: [
       {
         test: /\.(ts|tsx)$/i,
-        loader: "babel-loader",
         exclude: ["/node_modules/"],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-typescript", "@babel/preset-env"]
+          }
+        }
       },
       {
         test: /\.css$/i,
@@ -46,6 +51,21 @@ const config = {
 
       // Add your rules for custom modules here
       // Learn more about loaders from https://webpack.js.org/loaders/
+
+      /** 
+       * Adding rule here to load existing js modules. 
+       * Should aim to transition entirely to typescript eventually 
+       */
+      {
+        test: /\.js$/i,
+        exclude: ["/node_modules/"],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"]
+          }
+        }
+      }
     ],
   },
   resolve: {

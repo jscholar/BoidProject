@@ -3,35 +3,10 @@ import { randomRange, pickOneTriadic, pickOneTetradic } from './utils.js'
 import { Vector2D } from './vector.js'
 import { WORLD, appendFlock, flock } from "./world.js";
 
-function init() {
-    /**
-     * Initialize Canvas
-     */
-    const canvasElement = document.createElement("div");
-    canvasElement.setAttribute("id", "canvas");
-    canvasElement.classList.add("canvas");
-    canvasElement.style.width = `${WORLD.CANVAS_WIDTH}px`;
-    canvasElement.style.height = `${WORLD.CANVAS_HEIGHT}px`;
-    document.getElementById("canvas-container").appendChild(canvasElement);
-
-    /**
-     * Initialize Boids.
-     */
-    for (let i = 0; i < WORLD.NUM_BOIDS; i++) {
-        const isHighlighted = i === 0;
-        const boid = new Boid({ id: i, isHighlighted });
-        // rgb(75, 160, 255);
-        // boid.boidElement.style.borderLeftColor = `rgb(${randomRange(10, 50)},${randomRange(20, 80)},${randomRange(150, 230)})`;
-        boid.boidElement.style.borderLeftColor = pickOneTetradic("#0091FF", "#198AE0", "#2A81C4", "#2197F1");
-        // boid.boidElement.style.borderLeftColor = pickOneTetradic("#3E98FF", "#FF3D98", "#98FF3D", "#FFA53D");
-        // boid.boidElement.style.borderLeftColor = pickOneTriadic("#D5F7D4", "#D4F7F6", "#F7F6D4");
-        appendFlock(boid);
-    }
+export function initUI(flock) {
     if (flock[0]) {
         flock[0].boidElement.style.borderLeftColor = "BLACK";
     }
-
-    window.requestAnimationFrame(gameLoop);
 
     /**
      * Initialize default coefficient values.
@@ -218,25 +193,4 @@ function init() {
             flock[0].showNeighbors = true;
         }
     }
-
-
 }
-
-let lastTimestamp = 0;
-
-function gameLoop(timestamp) {
-    let deltaT = (timestamp - lastTimestamp) * WORLD.TIME_SCALE;
-    deltaT = Math.min(deltaT, 50);
-
-    for (let i = 0; i < flock.length; i++) {
-        const boid = flock[i];
-        boid.update(flock, deltaT);
-        boid.draw();
-    }
-
-    lastTimestamp = timestamp;
-    window.requestAnimationFrame(gameLoop);
-}
-
-init();
-console.log(flock);

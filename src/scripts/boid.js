@@ -75,7 +75,7 @@ class Boid {
         }
     }
 
-    update(flock: Boid[], deltaT) {
+    update(flock, deltaT) {
         // Search this boid for any nearby neighbors
         this.findNeighborsWithinRange(flock);
 
@@ -433,7 +433,7 @@ class Boid {
     /**
      * Draws the boid body
      */
-    drawBoid(): void {
+    drawBoid() {
         const styles = {};
         const transforms = [];
 
