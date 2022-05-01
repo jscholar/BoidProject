@@ -26,9 +26,9 @@ class Boid {
         this.highlighted = isHighlighted;
 
         // Coefficients
-        this.separationCoefficient = 1e-2 * 25;
-        this.cohereCoefficient = 1e-2 * 25;
-        this.alignCoefficient = 1e-3 * 25;
+        this.separationCoefficient = 1e-3 * 25;
+        this.cohereCoefficient = 1e-3 * 25;
+        this.alignCoefficient = 1e-2 * 25;
 
         // Display lines or not
         this.showAlign = false;
@@ -76,11 +76,7 @@ class Boid {
     }
 
     update(flock, deltaT) {
-        // Search this boid for any nearby neighbors
-        this.findNeighborsWithinRange(flock);
-
-        flock[0].drawBoid();
-
+        
         // Apply boid rules
         this.separate(deltaT);
         this.cohere(deltaT);
