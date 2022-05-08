@@ -285,3 +285,12 @@ input.align-range[type="range"]::-moz-range-progress {
   background-color: #f0ec19;
   height: 50%;
 }
+
+.fps {
+  font-family: 'Mukta Mahee', sans-serif;
+  position: absolute;
+  top: 10px;
+  left: 25px;
+  font-size: 24px;
+  font-weight: 700;
+}
