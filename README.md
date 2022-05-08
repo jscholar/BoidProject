@@ -6,7 +6,7 @@ Boids is an artificial life program that simulates the behavior of birds, fish, 
 ## Overview
 ---
 
-Live Preview: https://andrewjle.github.io/BoidProject/
+Live Preview: https://jscholar.github.io/BoidProject/
 
 
 **BOID CONTROLLER**
