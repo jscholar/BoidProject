@@ -13,7 +13,7 @@ class Boid {
     cohereSteerElement;
     alignSteerElement;
 
-    maxSpeed = 3;
+    maxSpeed = 4;
     range = 150;
 
     leftSideFOV = 130 * (Math.PI / 180);
@@ -26,9 +26,9 @@ class Boid {
         this.highlighted = isHighlighted;
 
         // Coefficients
-        this.separationCoefficient = 1e-3 * 25;
-        this.cohereCoefficient = 1e-3 * 25;
-        this.alignCoefficient = 1e-2 * 25;
+        this.separationCoefficient = 1e-2 * 5;
+        this.cohereCoefficient = 1e-2 * 5;
+        this.alignCoefficient = 1e-2 * 5;
 
         // Display lines or not
         this.showAlign = false;

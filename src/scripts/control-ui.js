@@ -11,10 +11,9 @@ export function initUI(flock) {
     /**
      * Initialize default coefficient values.
      */
-    var defaultSeparationCoefficient = 1e-2;
-    var defaultCohereCoefficient = 1e-2;
-    var defaultAlignCoefficient = 1e-3;
-
+     var defaultSeparationCoefficient = 1e-2 * 5;
+     var defaultCohereCoefficient = 1e-2 * 5;
+     var defaultAlignCoefficient = 1e-2 * 5;
     /**
      * Initialize separate slider.
      */

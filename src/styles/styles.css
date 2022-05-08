@@ -162,11 +162,11 @@ input:checked + label.display-boid-property-switch:after {
 /* DROP DOWN BOID CONTROLLER */
 
 .controller-wrapper {
+  position: absolute;
   text-align: center;
   font-family: 'Mukta Mahee', sans-serif;
   font-size: 1.2rem;
   color: white;
-  position: fixed;
   top: 0;
   left: 50%;
   transform: translate(-50%, 0);
