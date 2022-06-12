@@ -1,44 +1,33 @@
-export interface WorldOptions {
-    /**
-     * Timescale for physics calculations and animation
-     */
-    timescale: number;
-
-    /**
-     * Width of display canvas in pixels
-     */
-    width: number;
-
-    /**
-     * Height of display canvas in pixels
-     */
-    height: number;
-}
+import { WorldOptions } from "../@types/World";
 
 abstract class World {
-    timescale: WorldOptions["timescale"];
-    width: WorldOptions["width"];
-    height: WorldOptions["height"]
+  timescale: WorldOptions["timescale"];
 
-    protected lastFrameTimestamp: DOMHighResTimeStamp = 0;
+  width: WorldOptions["width"];
 
-    constructor(container: HTMLElement, options: WorldOptions) {
-        Object.assign(this, options);
-        this.initializeCanvas(container);
-    }
+  height: WorldOptions["height"];
 
-    public abstract initWorld(): void;
+  protected lastFrameTimestamp: DOMHighResTimeStamp = 0;
 
-    public abstract animate(timestamp: DOMHighResTimeStamp): void;
+  canvasElement: HTMLElement;
 
-    private initializeCanvas(container: HTMLElement) {
-        const canvasElement = document.createElement("div");
-        canvasElement.setAttribute("id", "canvas");
-        canvasElement.classList.add("canvas");
-        canvasElement.style.width = `${this.width}px`;
-        canvasElement.style.height = `${this.height}px`;
-        document.getElementById("canvas-container").appendChild(canvasElement);
-    }
+  constructor(container: HTMLElement, options: WorldOptions) {
+    Object.assign(this, options);
+    this.initializeCanvas(container);
+  }
+
+  public abstract initWorld(): void;
+
+  public abstract animate(timestamp: DOMHighResTimeStamp): void;
+
+  private initializeCanvas(container: HTMLElement) {
+    this.canvasElement = document.createElement("div");
+    this.canvasElement.setAttribute("id", "canvas");
+    this.canvasElement.classList.add("boid-world");
+    this.canvasElement.style.width = `${this.width}px`;
+    this.canvasElement.style.height = `${this.height}px`;
+    container.appendChild(this.canvasElement);
+  }
 }
 
 export default World;
