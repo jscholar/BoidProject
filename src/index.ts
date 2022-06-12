@@ -1,5 +1,5 @@
-import "./styles/styles.css"
-import { initUI } from "./scripts/control-ui";
+import "./styles/styles.css";
+import initUI from "./scripts/control-ui";
 
 import BoidWorld from "./objects/BoidWorld";
 import { DEFAULT_BOID_WORLD } from "./config/WORLD_PRESETS";
@@ -12,11 +12,13 @@ function main() {
 
   initUI(boidWorld.flock);
 
-  new FrameRateCalculator({
-    callback: function (fps: number) {
-      document.getElementById("fps").innerText = fps ? `${fps.toFixed(0)} FPS` : "N/A"
-    }
+  const frameRateCalculator = new FrameRateCalculator({
+    callback(fps: number) {
+      document.getElementById("fps").innerText = fps ? `${fps.toFixed(0)} FPS` : "N/A";
+    },
   });
+
+  frameRateCalculator.start();
   window.requestAnimationFrame(boidWorld.animate);
 }
 

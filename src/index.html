@@ -13,6 +13,21 @@
 <body>
     <div class="canvas-container" id="canvas-container"></div>
     <div id="fps" class="fps">50 FPS</div>
+    <div id="compute-mode" class="compute-mode">
+        <fieldset>
+            <legend>Compute Mode</legend>
+
+            <div>
+                <input type="radio" id="compute-mode-gpu" name="compute-mode" value="GPU" checked>
+                <label for="gpu">GPU</label>
+            </div>
+
+            <div>
+                <input type="radio" id="compute-mode-cpu" name="compute-mode" value="CPU">
+                <label for="cpu">CPU</label>
+            </div>
+        </fieldset>
+    </div>
     <div class="controller-wrapper">
         <label for="menu-toggle" class="dropdown">Boid Controller</label>
         <input type="checkbox" class="dropdown" id="menu-toggle" />

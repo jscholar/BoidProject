@@ -1,59 +1,59 @@
-import { Boid } from '../scripts/boid'
-import World, { WorldOptions } from './World'
+import World from "./World";
 
-import nearestNeighborKernel from '../kernels/nearestNeighborKernel'
+import { Boid } from "../scripts/boid";
+import { BoidWorldOptions } from "../@types/BoidWorld";
 
-export interface BoidWorldOptions extends WorldOptions {
-  /**
-   * Initial number of boids in the world
-   */
-  initialBoids: number
-}
+import onComputeModeChange from "../interface/computeMode";
+import BoidWorldUpdaterGPU from "../updaters/BoidWorldUpdaterGPU";
+import BoidWorldUpdaterCPU from "../updaters/BoidWorldUpdaterCPU";
+import { UpdaterComputeMode } from "../@types/Updaters";
 
 class BoidWorld extends World {
-  numBoids: number
-  initialBoids: number
-  flock: Boid[] = []
+  numBoids: number;
 
-  constructor (container: HTMLElement, options: BoidWorldOptions) {
-    super(container, options)
-    this.numBoids = this.initialBoids = options.initialBoids
+  initialBoids: number;
 
-    this.animate = this.animate.bind(this)
+  flock: Boid[] = [];
+
+  computeMode: UpdaterComputeMode = UpdaterComputeMode.GPU;
+
+  constructor(container: HTMLElement, options: BoidWorldOptions) {
+    super(container, options);
+    this.numBoids = options.initialNumBoids;
+    this.initialBoids = options.initialNumBoids;
+
+    this.animate = this.animate.bind(this);
+    this.handleComputeModeChange = this.handleComputeModeChange.bind(this);
+    
+    onComputeModeChange(this.handleComputeModeChange)
   }
 
-  public initWorld () {
-    for (let i = 0; i < this.initialBoids; i++) {
+  public initWorld() {
+    for (let i = 0; i < this.initialBoids; i += 1) {
       this.flock.push(
-        new Boid({ id: i, isHighlighted: i === 0 ? true : false })
-      )
+        new Boid({ id: i, isHighlighted: i === 0, world: this }),
+      );
     }
   }
 
-  public animate (timestamp: DOMHighResTimeStamp) {
-    let deltaT = (timestamp - this.lastFrameTimestamp) * this.timescale
-    deltaT = Math.min(deltaT, 50)
+  public animate(timestamp: DOMHighResTimeStamp) {
+    let deltaT = (timestamp - this.lastFrameTimestamp) * this.timescale;
+    deltaT = Math.min(deltaT, 50);
 
-    const positions = this.flock.map(({ position }) => [position.x, position.y])
-
-    const flockNeighbors = nearestNeighborKernel(positions) as number[][]
-    for (let i = 0; i < this.flock.length; i++) {
-      const boid = this.flock[i]
-      boid.neighbors = new Set(
-        flockNeighbors[i].reduce((neighbors, isNeighbor, neighbor) => {
-          if (isNeighbor) {
-            neighbors.push(this.flock[neighbor])
-          }
-          return neighbors
-        }, [])
-      )
-      boid.update(this.flock, deltaT)
-      boid.draw()
+    if (this.computeMode === UpdaterComputeMode.GPU) {
+      BoidWorldUpdaterGPU.updateWorld(this, deltaT);
+    } else {
+      BoidWorldUpdaterCPU.updateWorld(this, deltaT);
     }
 
-    this.lastFrameTimestamp = timestamp
-    window.requestAnimationFrame(this.animate)
+    this.lastFrameTimestamp = timestamp;
+    window.requestAnimationFrame(this.animate);
+  }
+
+  private handleComputeModeChange(computeMode: UpdaterComputeMode) {
+    console.log(computeMode);
+    this.computeMode = computeMode;
   }
 }
 
-export default BoidWorld
+export default BoidWorld;

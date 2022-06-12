@@ -294,3 +294,12 @@ input.align-range[type="range"]::-moz-range-progress {
   font-size: 24px;
   font-weight: 700;
 }
+
+.compute-mode {
+  font-family: 'Mukta Mahee', sans-serif;
+  position: absolute;
+  top: 10px;
+  left: 100px;
+  font-size: 24px;
+  font-weight: 700;
+}
